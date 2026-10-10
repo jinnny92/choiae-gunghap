@@ -77,15 +77,20 @@ export function transform(json, overrides = {}) {
     const birth = [...p.births][0];
     const y = +birth.slice(0, 4);
     if (y < 1940 || y > new Date().getFullYear() - 10) continue;
-    // 그룹 소속이 있거나, 배우 직업이 없는 가수만 '아이돌·가수'. 노래도 낸 배우는 배우로.
+    // 가수 겸 배우는 양쪽 필터에 모두 나오도록 cats에 둘 다 넣는다
     const isActor = ACTOR.some((q) => p.occ.has(q));
-    const isSinger = SINGER.some((q) => p.occ.has(q)) && (!!p.group || !isActor);
-    const category = isSinger ? 'idol' : 'actor';
+    const isSinger = SINGER.some((q) => p.occ.has(q));
+    const cats = [];
+    if (isSinger) cats.push('idol');
+    if (isActor) cats.push('actor');
+    const category = isSinger && (p.group || !isActor) ? 'idol' : 'actor';
+    const fallback = isSinger && isActor ? '가수·배우' : isSinger ? '가수' : '배우';
     const item = {
       id: p.id,
       name: p.name,
-      group: p.group || (isSinger ? '가수' : '배우'),
+      group: p.group || fallback,
       category,
+      cats,
       gender: p.gender,
       birth,
       pop: p.pop

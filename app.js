@@ -193,7 +193,7 @@
   ];
   function filtered() {
     return CELEBS.filter(function (c) {
-      return (state.cat === 'all' || c.category === state.cat) && (state.gender === 'all' || c.gender === state.gender);
+      return (state.cat === 'all' || (c.cats || [c.category]).indexOf(state.cat) >= 0) && (state.gender === 'all' || c.gender === state.gender);
     }).map(match);
   }
   function rowHTML(r, rank) {
@@ -216,7 +216,7 @@
     var items = filtered().filter(function (r) { return r.card.tab === state.tab; })
       .sort(function (a, b) { return b.score - a.score || (b.person.pop || 0) - (a.person.pop || 0) || a.person.name.localeCompare(b.person.name); }).slice(0, 10);
     var present = {};
-    CELEBS.forEach(function (c) { present[c.category] = true; });
+    CELEBS.forEach(function (c) { (c.cats || [c.category]).forEach(function (k) { present[k] = true; }); });
     var cats = [['all', '전체 분야']].concat([['idol', '아이돌·가수'], ['actor', '배우'], ['sports', '스포츠'], ['creator', '크리에이터']]
       .filter(function (c) { return present[c[0]]; }));
     var gens = [['all', '전체'], ['m', '남성'], ['f', '여성']];
