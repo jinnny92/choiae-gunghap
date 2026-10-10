@@ -77,7 +77,9 @@ export function transform(json, overrides = {}) {
     const birth = [...p.births][0];
     const y = +birth.slice(0, 4);
     if (y < 1940 || y > new Date().getFullYear() - 10) continue;
-    const isSinger = SINGER.some((q) => p.occ.has(q));
+    // 그룹 소속이 있거나, 배우 직업이 없는 가수만 '아이돌·가수'. 노래도 낸 배우는 배우로.
+    const isActor = ACTOR.some((q) => p.occ.has(q));
+    const isSinger = SINGER.some((q) => p.occ.has(q)) && (!!p.group || !isActor);
     const category = isSinger ? 'idol' : 'actor';
     const item = {
       id: p.id,
