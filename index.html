@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0D0B1C">
+<title>최애 궁합</title>
+<meta name="description" content="내 생일 하나로 최애와의 관계 카드를 뽑아보세요. 사주·별자리·타로로 보는 궁합.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Cinzel:wght@500;700&display=swap">
+<style>
+/* 레이아웃: 폰 폭 한 줄 컬럼(최대 430px), 밤하늘 남보라 바탕 + 금박 선. 결과 카드 한 장이 화면의 주인공 */
+:root {
+  --ink: #0D0B1C;
+  --panel: #15112A;
+  --line: #2E2847;
+  --line-gold: #5A4B2E;
+  --fg: #EFE6D2;
+  --soft: #C7BFD6;
+  --muted: #A49CB8;
+  --faint: #8A82A0;
+  --gold: #D8B46A;
+  --gold-hi: #EBCF92;
+  --gold-ink: #1A1306;
+  --display: 'Gowun Batang', 'Nanum Myeongjo', 'AppleMyungjo', serif;
+  --body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --mark: 'Cinzel', 'Times New Roman', serif;
+  color-scheme: dark;
+}
+html { background: var(--ink); }
+body { background: var(--ink); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--gold); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+
+#sky { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.app { position: relative; z-index: 1; max-width: 430px; margin: 0 auto; padding-inline: 20px; padding-block: 20px 40px; min-height: 100%; }
+.view { display: flex; flex-direction: column; gap: 22px; }
+
+/* 상단 바 */
+.bar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: 0.02em; }
+.icon-btn { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; background: transparent; border-radius: 12px; cursor: pointer; color: var(--fg); }
+.icon-btn:hover { background: var(--panel); }
+.bar-actions { display: flex; gap: 2px; }
+
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+.display { font-family: var(--display); font-weight: 700; }
+.h1 { font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1.35; }
+.lede { margin: 0; color: var(--muted); font-size: 15px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--muted); }
+.small { font-size: 13px; color: var(--muted); }
+.fine { font-size: 12px; color: var(--faint); text-align: center; margin: 0; }
+
+/* 입력 */
+.field { display: flex; flex-direction: column; gap: 8px; }
+.label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.date-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; }
+.select, .input { height: 52px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); padding: 0 14px; font-size: 16px; width: 100%; min-width: 0; }
+.select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 23px, calc(100% - 13px) 23px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 30px; }
+.error { color: #F0A08A; font-size: 13px; margin: 0; min-height: 1em; }
+
+.btn { height: 56px; border-radius: 14px; border: 0; background: var(--gold); color: var(--gold-ink); font-weight: 600; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; width: 100%; text-decoration: none; }
+.btn:hover { background: var(--gold-hi); }
+.btn-ghost { height: 52px; border-radius: 14px; border: 1px solid var(--line); background: transparent; color: var(--fg); font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; width: 100%; }
+.btn-ghost:hover { border-color: var(--line-gold); }
+.link-btn { border: 0; background: none; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 44px; font-size: 14px; padding: 0 4px; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+
+.note { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.55; color: var(--muted); }
+.note svg { flex: none; margin-top: 2px; }
+
+/* 칩·탭 */
+.tabs { display: flex; gap: 6px; background: var(--panel); border-radius: 12px; padding: 4px; }
+.tab { flex: 1; height: 40px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 500; cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--fg); color: var(--ink); font-weight: 600; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { height: 36px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--soft); font-size: 13px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--ink); border-color: var(--fg); font-weight: 600; }
+
+/* 오늘의 케미 */
+.today { display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--gold); border-radius: 18px; background: var(--panel); padding: 18px; text-align: left; cursor: pointer; width: 100%; color: var(--fg); }
+.today:hover { border-color: var(--gold-hi); }
+.today-top { display: flex; justify-content: space-between; align-items: center; }
+.today-tag { font-size: 12px; font-weight: 600; color: var(--gold); letter-spacing: 0.06em; }
+.today-body { display: flex; align-items: center; gap: 14px; }
+
+.stem-dot { width: 46px; height: 46px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 18px; flex: none; border: 1.5px solid var(--line); background: transparent; }
+.stem-dot.lg { width: 60px; height: 60px; font-size: 23px; }
+
+/* 목록 */
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; gap: 12px; min-height: 70px; width: 100%; border: 0; border-bottom: 1px solid #23203A; background: transparent; color: var(--fg); text-align: left; cursor: pointer; padding: 6px 2px; }
+.row:hover .row-name { color: var(--gold-hi); }
+.rank { width: 22px; text-align: center; font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--gold); flex: none; }
+.row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.row-name { font-size: 16px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-sub { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-score { font-family: var(--mark); font-weight: 700; font-size: 19px; flex: none; font-variant-numeric: tabular-nums; }
+.empty { padding: 28px 8px; text-align: center; color: var(--muted); font-size: 14px; }
+
+/* 결과 카드 */
+.reveal-label { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.new-badge { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--gold); color: var(--gold-ink); font-size: 12px; font-weight: 600; }
+.card-wrap { perspective: 1200px; display: flex; justify-content: center; }
+.arch { width: min(286px, 100%); aspect-ratio: 286 / 470; max-width: 100%; border: 1.5px solid var(--gold); border-radius: 143px 143px 14px 14px; padding: 8px; background: var(--panel); }
+.arch-in { width: 100%; height: 100%; border: 1px solid var(--line-gold); border-radius: 135px 135px 9px 9px; display: flex; flex-direction: column; align-items: center; padding: 34px 16px 20px; gap: 8px; text-align: center; }
+.arch .roman { font-family: var(--mark); font-size: 15px; letter-spacing: 0.24em; color: var(--gold); }
+.arch .emblem { width: 76%; max-width: 200px; aspect-ratio: 1; }
+.arch .rule { width: 50%; height: 1px; background: var(--line-gold); }
+.arch .cname { font-family: var(--display); font-weight: 700; font-size: 27px; letter-spacing: 0.04em; line-height: 1.3; }
+.arch .csub { font-size: 13px; color: var(--soft); }
+.arch .cfoot { margin-top: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.arch .cfoot .sc { font-family: var(--mark); font-size: 19px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.arch .cfoot .dash { width: 18px; height: 1px; background: var(--line-gold); }
+@keyframes flipIn { from { transform: rotateY(75deg) scale(0.92); opacity: 0.25; } to { transform: none; opacity: 1; } }
+.arch.flip { animation: flipIn 700ms cubic-bezier(.2,.7,.2,1) both; }
+
+.progress { display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.bar-track { width: 120px; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.bar-fill { height: 100%; background: var(--gold); border-radius: 2px; }
+
+.readings { border-top: 1px solid var(--line); display: flex; flex-direction: column; }
+.readings h2 { margin: 20px 0 4px; font-family: var(--display); font-size: 17px; text-align: center; }
+.reading { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.reading:last-child { border-bottom: 0; }
+.reading-mark { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line-gold); display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 15px; color: var(--gold); flex: none; }
+.reading-mark.mk { font-family: var(--mark); font-size: 10px; }
+.reading-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.reading-body p { margin: 0; font-size: 15px; }
+.reading-body p + p { color: var(--soft); font-size: 14px; }
+
+/* 도감 */
+.book { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.mini { border: 1px solid var(--line-gold); border-radius: 70px 70px 10px 10px; background: var(--panel); padding: 18px 10px 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-height: 210px; color: var(--fg); width: 100%; }
+button.mini { cursor: pointer; }
+button.mini:hover { border-color: var(--gold); }
+.mini .roman { font-family: var(--mark); font-size: 11px; letter-spacing: 0.2em; color: var(--gold); }
+.mini .emblem { width: 96px; height: 96px; }
+.mini .mname { font-family: var(--display); font-weight: 700; font-size: 15px; line-height: 1.35; }
+.mini .mwho { font-size: 12px; color: var(--muted); }
+.mini.locked { border-style: dashed; border-color: var(--line); background: transparent; }
+.mini.locked .q { width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 34px; color: var(--line); }
+
+/* 공유 시트 */
+.sheet { position: fixed; inset: 0; z-index: 10; background: rgba(6, 5, 14, 0.86); display: flex; align-items: flex-end; justify-content: center; }
+.sheet-in { width: 100%; max-width: 430px; max-height: 100%; overflow: auto; background: var(--ink); border-top: 1px solid var(--line); border-radius: 22px 22px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; }
+.sheet-img { width: 62%; max-width: 240px; align-self: center; border-radius: 12px; border: 1px solid var(--line); aspect-ratio: 9 / 16; object-fit: cover; background: var(--panel); }
+.sheet-msg { text-align: center; font-size: 14px; color: var(--soft); margin: 0; }
+
+@media (prefers-reduced-motion: reduce) { .arch.flip { animation: none; } * { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+
+<canvas id="sky" aria-hidden="true"></canvas>
+<main class="app" id="app" aria-live="polite"></main>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <h2 id="sheet-title" class="display" style="font-size:18px;text-align:center">스토리 카드</h2>
+    <img id="sheet-img" class="sheet-img" alt="공유용 관계 카드 이미지">
+    <p class="sheet-msg" id="sheet-msg">이미지를 길게 눌러 저장하거나, 아래 버튼을 눌러주세요.</p>
+    <div class="stack">
+      <button type="button" class="btn" id="sheet-share" hidden>공유하기</button>
+      <button type="button" class="btn-ghost" id="sheet-save">이미지 저장</button>
+      <button type="button" class="btn-ghost" id="sheet-close">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script src="logic.js"></script>
+<script src="data.js"></script>
+<script src="celebs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
